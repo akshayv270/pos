@@ -1,25 +1,18 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react'
+import { connect } from 'react-redux'
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+//import LoginForm from './LoginForm'
+import LoginForm from './Login/LoginForm'
+//import SecretPage from './SecretPage'
+import SecretPage from './Login/SecretPage'
 
-export default App;
+const App = ({ isLoggedIn, pendingLogin, user, onSubmit, onLogout }) => (
+  <>
+    {!isLoggedIn && <LoginForm pendingLogin={pendingLogin} onSubmit={onSubmit} /> || <SecretPage onLogout={onLogout} />}
+    {pendingLogin && <p style={{ textAlign: 'center' }}>Please wait...</p>}
+  </>
+)
+
+const mapStateToProps = ({ isLoggedIn, pendingLogin, user }) => ({ isLoggedIn, pendingLogin, user })
+
+export default connect(mapStateToProps)(App)

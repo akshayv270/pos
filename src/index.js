@@ -1,17 +1,34 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import React from 'react'
+import ReactDOM from 'react-dom'
+import { createStore, applyMiddleware } from 'redux'
+import createSagaMiddleware from 'redux-saga'
+import { Provider } from 'react-redux'
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
+import App from './App'
+//import rootReducer from './reducers'
+import rootReducer from './Login/reducers'
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+//import rootSaga from './sagas'
+import rootSaga from './Login/sagas'
+
+const sagaMiddleware = createSagaMiddleware()
+const store = createStore(
+  rootReducer,
+  applyMiddleware(sagaMiddleware)
+)
+sagaMiddleware.run(rootSaga)
+
+const action = (type, payload) => {
+  console.log('dispatch', { type, payload });
+  store.dispatch({ type, payload });
+}
+
+ReactDOM.render(
+  <Provider store={store}>
+    <App
+      onSubmit={({ username, password }) => action('LOGIN_REQUESTED', { username, password })}
+      onLogout={() => action('LOGOUT_REQUESTED')}
+    />
+  </Provider>,
+  document.getElementById('root')
+)
